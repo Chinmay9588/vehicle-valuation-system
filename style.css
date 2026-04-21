@@ -1,0 +1,599 @@
+/* ============================================================
+   style.css — Vehicle Price Predictor Pro
+   ============================================================
+   Sections:
+     1. CSS Variables (design tokens)
+     2. Reset & Base
+     3. Layout (container, header, main-content)
+     4. Form Panel (glass card, inputs, button)
+     5. Validation Styles (errors, invalid states)
+     6. Results Panel (price, category, depreciation, summary)
+     7. Animations
+     8. Responsive (mobile)
+   ============================================================ */
+
+
+/* ============================================================
+   1. CSS Variables — Design Tokens
+   ============================================================ */
+:root {
+    /* Brand colours */
+    --primary:        #4F46E5;   /* Indigo — buttons, focus rings */
+    --primary-hover:  #4338CA;   /* Darker indigo on hover */
+    --secondary:      #10B981;   /* Emerald — positive values */
+
+    /* Backgrounds */
+    --dark:           #1E293B;
+    --glass-bg:       rgba(255, 255, 255, 0.10);
+    --glass-border:   rgba(255, 255, 255, 0.20);
+
+    /* Text */
+    --text-main:      #FFFFFF;
+    --text-muted:     #CBD5E1;
+    --text-subtle:    rgba(203, 213, 225, 0.6);
+
+    /* Semantic colours */
+    --success:  #10B981;   /* Green  — low depreciation */
+    --warning:  #F59E0B;   /* Amber  — medium depreciation */
+    --danger:   #EF4444;   /* Red    — high depreciation / errors */
+}
+
+
+/* ============================================================
+   2. Reset & Base
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+
+/* Decorative radial-glow overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(79,70,229,0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(16,185,129,0.15), transparent 25%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* ============================================================
+   3. Layout
+   ============================================================ */
+.container {
+    max-width: 1200px;
+    width: 90%;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* Page header */
+.header {
+    text-align: center;
+    animation: fadeInDown 0.7s ease-out;
+}
+
+.header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #60A5FA, #34D399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+/* Two-column side-by-side layout */
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Shared glass-card style */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    flex: 1 1 400px;
+    max-width: 520px;
+}
+
+.form-container  { animation: fadeInLeft  0.7s ease-out; }
+.results-container { animation: fadeInRight 0.7s ease-out; text-align: center; }
+
+
+/* ============================================================
+   4. Form Panel
+   ============================================================ */
+.form-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 1.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-group {
+    margin-bottom: 1.4rem;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* All text inputs and selects share base styles */
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.25);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.input-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23CBD5E1' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.3);
+}
+
+.input-group select option {
+    background: var(--dark);
+    color: white;
+}
+
+/* Subtle hint text below inputs */
+.input-hint {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.77rem;
+    color: var(--text-subtle);
+    font-style: italic;
+}
+
+/* Submit button */
+.btn-primary {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    margin-top: 0.5rem;
+    background: var(--primary);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    box-shadow: 0 4px 15px rgba(79,70,229,0.4);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(79,70,229,0.6);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+    transition: transform 0.25s;
+}
+
+.btn-primary:hover .btn-icon {
+    transform: translateX(4px);
+}
+
+
+/* ============================================================
+   5. Validation Styles
+   ============================================================ */
+
+/* Server-side error list (top of form) */
+.validation-errors {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.4);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+}
+
+.validation-errors .error-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.validation-errors ul {
+    list-style: none;
+    margin: 0;
+}
+
+.validation-errors li {
+    font-size: 0.88rem;
+    color: #FCA5A5;
+    line-height: 1.6;
+}
+
+.validation-errors li + li {
+    margin-top: 0.2rem;
+}
+
+/* Per-field inline error messages */
+.field-error {
+    display: block;
+    min-height: 1.2em;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--danger);
+    font-weight: 500;
+}
+
+/* Red border on invalid fields */
+.input-invalid {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.2) !important;
+}
+
+
+/* ============================================================
+   6. Results Panel
+   ============================================================ */
+
+/* Error state */
+.error-state {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.error-icon-large {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.8rem;
+}
+
+.error-state h2 {
+    color: var(--danger);
+    margin-bottom: 0.5rem;
+}
+
+.error-state p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Report title */
+.report-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: #F8FAFC;
+}
+
+.report-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* Big price display */
+.price-display {
+    margin: 1.5rem 0;
+}
+
+.currency-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.4rem;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--secondary);
+    text-shadow: 0 0 20px rgba(16,185,129,0.35);
+    line-height: 1.1;
+}
+
+.rupee-symbol {
+    font-size: 2rem;
+    vertical-align: super;
+    margin-right: 0.1rem;
+}
+
+/* Category badge */
+.category-badge {
+    display: inline-block;
+    padding: 0.45rem 1.4rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.category-badge.economy {
+    background: rgba(59,130,246,0.15);
+    color: #60A5FA;
+    border: 1px solid #3B82F6;
+}
+
+.category-badge.mid-range {
+    background: rgba(245,158,11,0.15);
+    color: #FBBF24;
+    border: 1px solid #F59E0B;
+}
+
+.category-badge.luxury {
+    background: rgba(139,92,246,0.15);
+    color: #A78BFA;
+    border: 1px solid #8B5CF6;
+}
+
+/* ── Depreciation Card ── */
+.depreciation-card {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    text-align: left;
+    animation: fadeInUp 0.5s ease-out 0.25s both;
+}
+
+.depreciation-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.4rem;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.depreciation-icon  { font-size: 1.2rem; }
+
+.depreciation-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.depreciation-body  { padding: 1.4rem; }
+
+/* The big % number */
+.depreciation-value {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+.depreciation-value.low    { color: var(--success); text-shadow: 0 0 14px rgba(16,185,129,0.3); }
+.depreciation-value.medium { color: var(--warning);  text-shadow: 0 0 14px rgba(245,158,11,0.3); }
+.depreciation-value.high   { color: var(--danger);   text-shadow: 0 0 14px rgba(239,68,68,0.3); }
+
+.depreciation-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+}
+
+/* Gradient progress bar */
+.depreciation-bar-container {
+    width: 100%;
+    height: 7px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.1rem;
+}
+
+.depreciation-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
+    transition: width 1s ease-out 0.5s;
+    min-width: 2%;
+}
+
+/* Showroom vs Resale comparison row */
+.depreciation-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.dep-detail-item {
+    flex: 1;
+}
+
+.dep-detail-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+
+.dep-detail-value {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.dep-detail-value.resale {
+    color: var(--secondary);
+}
+
+.dep-detail-divider {
+    color: var(--text-subtle);
+    font-size: 1.2rem;
+}
+
+/* ── Car Details Summary Grid ── */
+.details {
+    background: rgba(0,0,0,0.15);
+    border-radius: 14px;
+    padding: 1.4rem;
+    text-align: left;
+}
+
+.details > p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.summary-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.summary-list li {
+    background: rgba(255,255,255,0.05);
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.summary-list strong {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    margin-bottom: 0.2rem;
+}
+
+
+/* ============================================================
+   7. Animations
+   ============================================================ */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-25px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-25px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(25px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+    animation: fadeInRight 0.6s ease-out forwards;
+}
+
+
+/* ============================================================
+   8. Responsive — Mobile (≤ 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+    .header h1   { font-size: 2.1rem; }
+    .price       { font-size: 2.4rem; }
+    .glass-panel { padding: 1.8rem; max-width: 100%; }
+
+    .depreciation-value { font-size: 2.2rem; }
+
+    .summary-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .depreciation-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .dep-detail-divider { display: none; }
+}
+
+@media (max-width: 480px) {
+    .summary-list { grid-template-columns: 1fr; }
+}
